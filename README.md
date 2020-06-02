@@ -13,4 +13,4 @@ Also inspired by Lookahead implementations by:
 
 This project seeks to explore the following question:
 
-> If Lookahead improves convergence by seeking out which direction is best for updating weights, would the inner loop of Lookahead benefit by also using Lookahead?
+If Lookahead improves convergence by seeking out which direction is best for updating weights, would the inner loop of Lookahead benefit by also using Lookahead?
