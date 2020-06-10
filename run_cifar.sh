@@ -1,4 +1,5 @@
 #!/bin/bash
+j=0
 for opt_t in "SGD" "Adam" "Lookahead_SGD" "Lookahead_Adam" "NestedLookahead_SGD" "NestedLookahead_Adam"
 do
     for i in {1..3}
@@ -16,5 +17,6 @@ do
         echo "($j) $opt_t $i"
         echo "python experiment_cifar10.py --epochs $epochs --bs $bs --lr $lr --mom $momentum --wd $weight_decay --opt $opt_t --k $k --a $a --s $s --h $h --pullback $pullback --tag $i"
         eval "python experiment_cifar10.py --epochs $epochs --bs $bs --lr $lr --mom $momentum --wd $weight_decay --opt $opt_t --k $k --a $a --s $s --h $h --pullback $pullback --tag $i"
+        j=$((j+1))
     done
 done
