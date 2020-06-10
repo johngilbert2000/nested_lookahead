@@ -1,5 +1,6 @@
 #!/bin/bash
 for opt_t in "Lookahead_SGD" "Lookahead_Adam" "NestedLookahead_SGD" "NestedLookahead_Adam"
+do
     for i in {1..3}
     do
         epochs=20
