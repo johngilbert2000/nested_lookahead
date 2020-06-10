@@ -41,7 +41,7 @@ args = parser.parse_args()
 
 # Parameters
 #epochs = 5 # 30
-#bs = 64 # 128
+#bs = 64
 #lr = 0.001
 #momentum = 0.9
 #weight_decay = 1e-3
