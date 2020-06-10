@@ -7,8 +7,8 @@ from NestedLookahead import NestedLookahead
 
 import os
 import time
+import datetime
 import pandas as pd
-
 import argparse
 import gc
 
@@ -77,11 +77,11 @@ if (opt_t == 'Lookahead_SGD') or (opt_t == 'Lookahead_Adam'):
     s = 0
 
 def to_device(*stuff):
-    "moves stuff to device (gpu)"
+    "Move stuff to device (gpu)"
     return [obj.to(device) for obj in stuff]
     
 def to_cpu(*stuff):
-    "moves stuff to cpu"
+    "Move stuff to cpu"
     return [obj.to('cpu') for obj in stuff]
 
 # Data Transformations
@@ -167,6 +167,12 @@ def validate(model, test_dl, loss_func):
             accs.append(correct/total)
     return accs
 
+
+def conv_sec(s):
+    "Convert seconds to time format"
+    return str(datetime.timedelta(seconds=int(s)))
+
+if verbose: print("     Accuracies per Epoch\n", "-"*32)
 train_accs = []
 test_accs = []
 start_t = time.time()
@@ -175,13 +181,13 @@ for epoch in range(epochs):
     train_acc = train(model, train_dl, loss_func, opt)
     train_accs += train_acc
     t = time.time() - start_t
-    if verbose: print(epoch, int(t), "s, train_acc:", train_acc[-1])
+    if verbose: print(f"{epoch} | {conv_sec(t)} | train: {train_acc[-1]:.5f}")
     
     # Validate
     test_acc = validate(model, test_dl, loss_func)
     test_accs += test_acc
     t = time.time() - start_t
-    if verbose: print(epoch, int(t), "s, test_acc:", test_acc[-1])
+    if verbose: print(f"{epoch} | {conv_sec(t)} | test:  {test_acc[-1]:.5f}\n", "-"*32)
 
 # Store Accuracies
 tr_acc_df = pd.DataFrame(train_accs)
