@@ -16,6 +16,7 @@ This project seeks to explore the following question:
 
 > If Lookahead improves convergence by seeking out which direction is best for updating weights, would the inner loop of Lookahead benefit by also using Lookahead?
 
+TL;DR – It doesn't.
 
 Usage
 ------
@@ -71,8 +72,33 @@ h=0.5 # outer slow weight step size (Nested Lookahead only)
 pullback="None" # Lookahead pullback momentum ("None", "pullback", or "reset")
 ```
 
+Results
+------
+
+The following are results for all optimizers on CIFAR-10 with ResNet-18:
+```
+folds:         3
+epochs:        20
+batch size:    64
+learning rate: 0.001
+momentum:      0.9 (for SGD)
+weight decay:  0.001
+
+k: 5   (fast-weight steps)
+a: 0.5 (inner slow-weight step size)
+s: 5   (outer slow weight steps (Nested Lookahead only))
+h: 0.5 (outer slow weight step size (Nested Lookahead only))
+pullback: "None", "reset", and "pullback" (Lookahead pullback momentum)
+```
+![Cifar10_test_accuracies](https://github.com/johngilbert2000/nested_lookahead/blob/master/plots/cifar10_default_test_acc.png)
+
+![Cifar10_test_acc_tail](https://github.com/johngilbert2000/nested_lookahead/blob/master/plots/cifar10_default_test_acc_tail.png)
+
+Conclusion
+------
+`NestedLookahead` appears to have no performance improvement over regular `Lookahead`.
+
 TODO
 ------
 - Setup and run other experiments for Nested Lookahead (CIFAR-100, ImageNet, etc.)
 - Compare results for differing initial parameters (loop sizes, step sizes, pullback momentum)
-- Compare with other optimizers (Regular Lookahead, Adam, SGD)
