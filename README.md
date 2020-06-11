@@ -90,9 +90,14 @@ s: 5   (outer slow weight steps (Nested Lookahead only))
 h: 0.5 (outer slow weight step size (Nested Lookahead only))
 pullback: "None", "reset", and "pullback" (Lookahead pullback momentum)
 ```
+*Note that Accuracy is from 0 to 1, with 1 indicating 100% accuracy.*
+
+*Steps are optimizer steps taken over the course of 20 epochs.*
+
 ![Cifar10_test_accuracies](https://github.com/johngilbert2000/nested_lookahead/blob/master/plots/cifar10_default_test_acc.png)
 
 ![Cifar10_test_acc_tail](https://github.com/johngilbert2000/nested_lookahead/blob/master/plots/cifar10_default_test_acc_tail.png)
+
 
 Conclusion
 ------
