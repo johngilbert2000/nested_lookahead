@@ -52,10 +52,28 @@ Experiments
 ------
 From the command line, run the following shell scripts to run full experiments with Nested Lookahead, Lookahead, SGD, and Adam.
 
+**Optimizer Comparison**
 - `bash run_cifar.sh` for CIFAR-10 with ResNet-18 (Estimated time: 3 hours with single GPU)
 - `bash run_cifar_pullback.sh` for Lookahead pullback/reset momentum on CIFAR-10 (Estimated time: 1 hr. 20 mins.)
 
 Alternatively, use `chmod u+r+x run_cifar.sh; ./run_cifar.sh` instead of `bash run_cifar.sh`.
+
+**Hyperparameter tuning**
+- `bash run_cifar_variation.sh`
+
+**Full Run**
+- `bash run_cifar_200_epochs.sh`
+
+**Demo**
+- `bash run_demo.sh`
+
+Use `make_plot.py` to generate plots in the `plots/` folder. An example usage of `make_plot.py` could be:
+
+```
+python make_plot.py --tag demo --method "NestedLookahead Adam" --without "pullback reset"
+```
+
+Type `python make_plot.py --help` for details on how to use the command line arguments. Alternatively, create plots using the `plot_results.ipynb` jupyter notebook.
 
 Parameters
 ------
@@ -147,4 +165,3 @@ Conclusion
 TODO
 ------
 - Setup and run other experiments for Nested Lookahead (CIFAR-100, ImageNet, etc.)
-- Compare results for differing initial parameters (loop sizes, step sizes, pullback momentum)
