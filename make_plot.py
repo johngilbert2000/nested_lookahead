@@ -8,12 +8,12 @@ import argparse
 
 # Command line arguments
 parser = argparse.ArgumentParser()
-parser.add_argument("--method", help="Name of optimizer method", type=str, default="NestedLookahead Adam")
-parser.add_argument("--without", help="Specify keywords of filenames not to include", type=str, default="pullback reset")
+parser.add_argument("--method", help="Name of optimizer method", type=str, nargs='+', default="NestedLookahead Adam")
+parser.add_argument("--without", help="Specify keywords of filenames not to include", nargs='+', type=str, default="pullback reset")
 parser.add_argument("--tag", help="Tag added to image file name (e.g., demo)", type=str, default="demo")
 parser.add_argument("--root", help="directory name containing data to graph", type=str, default="accs")
 parser.add_argument("--runs", help="Number of runs within data", type=int, default=2)
-parser.add_argument("--img", help=, type="Image file base name", default="test_acc")
+parser.add_argument("--img", help="Image file base name", type=str, default="test_acc")
 args = parser.parse_args()
 
 # Settings
@@ -27,7 +27,14 @@ to_file_base = 'cifar10_' + tag
 verbose = False
 
 method = args.method # terms for data to include in plot
-without_terms = args.without.split() # terms for data not to include in plot (e.g., momentum=0, pullback, Nested, etc.)
+without_terms = args.without # terms for data not to include in plot (e.g., momentum=0, pullback, Nested, etc.)
+
+# Ensure argparse accepts terms correctly
+if isinstance(without_terms, str):
+    without_terms = without_terms.split()
+
+if not isinstance(method, str) and isinstance(method, Iterable):
+    method = " ".join(method)
 
 # Ensure `plots/` directory exists
 if not os.path.isdir('plots'):
