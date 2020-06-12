@@ -20,7 +20,7 @@ TL;DR – It doesn't.
 
 For the purpose of formality, this is the Nested Lookahead algorithm:
 
-<img src=https://github.com/johngilbert2000/nested_lookahead/blob/master/NLA_Algorithm.png height="312" width="472">
+<img src=https://github.com/johngilbert2000/nested_lookahead/blob/master/plots/NLA_Algorithm.png height="312" width="472">
 
 Usage
 ------
