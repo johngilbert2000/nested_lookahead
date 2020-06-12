@@ -79,9 +79,11 @@ pullback="None" # Lookahead pullback momentum ("None", "pullback", or "reset")
 Results
 ------
 
+#### Optimizer Comparison (`run_cifar.sh` and `run_cifar_pullback.sh`)
+
 The following are results for all optimizers on CIFAR-10 with ResNet-18:
 ```
-folds:         3
+runs:          3
 epochs:        20
 batch size:    64
 learning rate: 0.001
@@ -101,6 +103,41 @@ pullback: "None", "reset", and "pullback" (Lookahead pullback momentum)
 ![Cifar10_test_accuracies](https://github.com/johngilbert2000/nested_lookahead/blob/master/plots/cifar10_default_test_acc.png)
 
 ![Cifar10_test_acc_tail](https://github.com/johngilbert2000/nested_lookahead/blob/master/plots/cifar10_default_test_acc_tail.png)
+
+#### Hyperparameter Analysis (`run_cifar_variation.sh`)
+
+The following parameters were varied across optimizers:
+```
+weight decay:   0 vs. 0.001
+momentum:       0 vs. 0.9
+learning rate:  0.005, 0.0005 vs. 0.001
+k:              10 vs. 5
+a:              0.3, 0.7 vs. 0.5
+s:              10 vs. 5
+h:              0.3, 0.7 vs. 0.5
+```
+
+![nested_LA_adam_hyperparameters](https://github.com/johngilbert2000/nested_lookahead/blob/master/plots/cifar10_hyperparameter_nested_lookahead_adam_test_acc.png)
+
+![sgd_hyperparameters](https://github.com/johngilbert2000/nested_lookahead/blob/master/plots/cifar10_hyperparameter_sgd_test_acc.png)
+
+#### Full Run: 200 epochs (`run_cifar_200_epochs.sh`)
+
+The following parameters were used for the final accuracy of Nested Lookahead:
+```
+runs:          3
+epochs:        200
+batch size:    64
+learning rate: 0.001
+weight decay:  0
+
+k: 5   (fast-weight steps)
+a: 0.7 (inner slow-weight step size)
+s: 10   (outer slow weight steps (Nested Lookahead only))
+h: 0.3 (outer slow weight step size (Nested Lookahead only))
+pullback: "None" (Lookahead pullback momentum)
+```
+
 
 
 Conclusion
