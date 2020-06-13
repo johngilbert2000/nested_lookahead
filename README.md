@@ -16,7 +16,7 @@ This project seeks to explore the following question:
 
 > If Lookahead improves convergence by seeking out which direction is best for updating weights, would the inner loop of Lookahead benefit by also using Lookahead?
 
-TL;DR – It doesn't.
+(TL;DR – It doesn't).
 
 For the purpose of formality, this is the Nested Lookahead algorithm:
 
@@ -61,19 +61,21 @@ Alternatively, use `chmod u+r+x run_cifar.sh; ./run_cifar.sh` instead of `bash r
 **Hyperparameter tuning**
 - `bash run_cifar_variation.sh`
 
-**Full Run**
-- `bash run_cifar_200_epochs.sh`
-
 **Demo**
 - `bash run_demo.sh`
 
 Use `make_plot.py` to generate plots in the `plots/` folder. An example usage of `make_plot.py` could be:
 
 ```
-python make_plot.py --tag demo --method "NestedLookahead Adam" --without "pullback reset"
+python make_plot.py --with_t "demo" --tag "demo"
 ```
 
-Type `python make_plot.py --help` for details on how to use the command line arguments. Alternatively, create plots using the `plot_results.ipynb` jupyter notebook.
+Another example, using a specific method:
+```
+python make_plot.py --method "NestedLookahead Adam" --without "pullback reset" --tag "NLA"
+```
+
+Type `python make_plot.py --help` for details on how to use the command line arguments. Alternatively, create plots using the `plot_results.ipynb` Jupyter Notebook.
 
 Parameters
 ------
@@ -97,71 +99,5 @@ pullback="None" # Lookahead pullback momentum ("None", "pullback", or "reset")
 Results
 ------
 
-#### Optimizer Comparison (`run_cifar.sh` and `run_cifar_pullback.sh`)
+See [report.pdf](https://github.com/johngilbert2000/nested_lookahead/blob/master/report.pdf) for details.
 
-The following are results for all optimizers on CIFAR-10 with ResNet-18:
-```
-runs:          3
-epochs:        20
-batch size:    64
-learning rate: 0.001
-momentum:      0.9 (for SGD)
-weight decay:  0.001
-
-k: 5   (fast-weight steps)
-a: 0.5 (inner slow-weight step size)
-s: 5   (outer slow weight steps (Nested Lookahead only))
-h: 0.5 (outer slow weight step size (Nested Lookahead only))
-pullback: "None", "reset", and "pullback" (Lookahead pullback momentum)
-```
-*Note that Accuracy is from 0 to 1, with 1 indicating 100% accuracy.*
-
-*Steps are optimizer steps taken over the course of 20 epochs.*
-
-![Cifar10_test_accuracies](https://github.com/johngilbert2000/nested_lookahead/blob/master/plots/cifar10_default_test_acc.png)
-
-![Cifar10_test_acc_tail](https://github.com/johngilbert2000/nested_lookahead/blob/master/plots/cifar10_default_test_acc_tail.png)
-
-#### Hyperparameter Analysis (`run_cifar_variation.sh`)
-
-The following parameters were varied across optimizers:
-```
-weight decay:   0 vs. 0.001
-momentum:       0 vs. 0.9
-learning rate:  0.005, 0.0005 vs. 0.001
-k:              10 vs. 5
-a:              0.3, 0.7 vs. 0.5
-s:              10 vs. 5
-h:              0.3, 0.7 vs. 0.5
-```
-
-![nested_LA_adam_hyperparameters](https://github.com/johngilbert2000/nested_lookahead/blob/master/plots/cifar10_hyperparameter_nested_lookahead_adam_test_acc.png)
-
-![sgd_hyperparameters](https://github.com/johngilbert2000/nested_lookahead/blob/master/plots/cifar10_hyperparameter_sgd_test_acc.png)
-
-#### Full Run: 200 epochs (`run_cifar_200_epochs.sh`)
-
-The following parameters were used for the final accuracy of Nested Lookahead:
-```
-runs:          3
-epochs:        200
-batch size:    64
-learning rate: 0.001
-weight decay:  0
-
-k: 5   (fast-weight steps)
-a: 0.7 (inner slow-weight step size)
-s: 10   (outer slow weight steps (Nested Lookahead only))
-h: 0.3 (outer slow weight step size (Nested Lookahead only))
-pullback: "None" (Lookahead pullback momentum)
-```
-
-
-
-Conclusion
-------
-`NestedLookahead` appears to have no performance improvement over regular `Lookahead`.
-
-TODO
-------
-- Setup and run other experiments for Nested Lookahead (CIFAR-100, ImageNet, etc.)
