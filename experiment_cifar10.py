@@ -188,14 +188,14 @@ for epoch in range(epochs):
     train_accs += train_acc
     train_losses += train_loss
     t = time.time() - start_t
-    if verbose: print(f"{epoch} | {conv_sec(t)} | train: {train_acc[-1]:.5f} | loss: {train_losses[-1]}")
+    if verbose: print(f"{epoch} | {conv_sec(t)} | train: {train_acc[-1]:.5f}")
     
     # Validate
     test_acc, test_loss = validate(model, test_dl, loss_func)
     test_accs += test_acc
     test_losses += test_loss
     t = time.time() - start_t
-    if verbose: print(f"{epoch} | {conv_sec(t)} | test:  {test_acc[-1]:.5f} | loss: {test_losses[-1]}\n", "-"*32)
+    if verbose: print(f"{epoch} | {conv_sec(t)} | test:  {test_acc[-1]:.5f}\n", "-"*32)
 
 # Store Accuracies
 tr_acc_df = pd.DataFrame(train_accs)
@@ -205,9 +205,9 @@ tst_acc_df = pd.DataFrame(test_accs)
 if not os.path.isdir('accs'):
     os.mkdir('accs')
 
-if not os.path.isdir('losses'):
-    os.mkdir('loss')
+# if not os.path.isdir('losses'):
+#     os.mkdir('loss')
 
 # tr_acc_df.to_csv(f"accs/train_accs_{opt_t}_{tag}.csv")
-tr_loss_df.to_csv(f"loss/train_loss_{opt_t}_{tag}.csv")
+# tr_loss_df.to_csv(f"loss/train_loss_{opt_t}_{tag}.csv")
 tst_acc_df.to_csv(f"accs/test_accs_{opt_t}_{tag}.csv")
