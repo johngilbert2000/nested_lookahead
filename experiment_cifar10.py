@@ -134,6 +134,7 @@ def train(model, train_dl, loss_func, opt):
     model.train()
     correct = total = train_loss = 0
     accs = []
+    losses = []
     for X, Y_true in train_dl:
         X, Y_true = to_device(X, Y_true)
         opt.zero_grad()
@@ -147,13 +148,15 @@ def train(model, train_dl, loss_func, opt):
         correct += (Y_pred == Y_true).type(torch.IntTensor).sum().item()
         total += len(Y_true)
         accs.append(correct/total)
-    return accs
+        losses.append(train_loss)
+    return accs, losses
 
 # Validation / Test Loop
 def validate(model, test_dl, loss_func):
     model.eval()
     correct = total = test_loss = 0
     accs = []
+    losses = []
     with torch.no_grad():
         for X, Y_true in test_dl:
             X, Y_true = to_device(X, Y_true)
@@ -165,7 +168,8 @@ def validate(model, test_dl, loss_func):
             correct += (Y_pred == Y_true).type(torch.IntTensor).sum().item()
             total += len(Y_true)
             accs.append(correct/total)
-    return accs
+            losses.append(test_loss)
+    return accs, losses
 
 
 def conv_sec(s):
@@ -174,27 +178,36 @@ def conv_sec(s):
 
 if verbose: print("     Accuracies per Epoch\n", "-"*32)
 train_accs = []
+train_losses = []
 test_accs = []
+test_losses = []
 start_t = time.time()
 for epoch in range(epochs):
     # Train
-    train_acc = train(model, train_dl, loss_func, opt)
+    train_acc, train_loss = train(model, train_dl, loss_func, opt)
     train_accs += train_acc
+    train_losses += train_loss
     t = time.time() - start_t
-    if verbose: print(f"{epoch} | {conv_sec(t)} | train: {train_acc[-1]:.5f}")
+    if verbose: print(f"{epoch} | {conv_sec(t)} | train: {train_acc[-1]:.5f} | loss: {train_losses[-1]}")
     
     # Validate
-    test_acc = validate(model, test_dl, loss_func)
+    test_acc, test_loss = validate(model, test_dl, loss_func)
     test_accs += test_acc
+    test_losses += test_loss
     t = time.time() - start_t
-    if verbose: print(f"{epoch} | {conv_sec(t)} | test:  {test_acc[-1]:.5f}\n", "-"*32)
+    if verbose: print(f"{epoch} | {conv_sec(t)} | test:  {test_acc[-1]:.5f} | loss: {test_losses[-1]}\n", "-"*32)
 
 # Store Accuracies
 tr_acc_df = pd.DataFrame(train_accs)
+tr_loss_df = pd.DataFrame(train_losses)
 tst_acc_df = pd.DataFrame(test_accs)
 
 if not os.path.isdir('accs'):
     os.mkdir('accs')
 
-tr_acc_df.to_csv(f"accs/train_accs_{opt_t}_{tag}.csv")
+if not os.path.isdir('losses'):
+    os.mkdir('loss')
+
+# tr_acc_df.to_csv(f"accs/train_accs_{opt_t}_{tag}.csv")
+tr_loss_df.to_csv(f"loss/train_loss_{opt_t}_{tag}.csv")
 tst_acc_df.to_csv(f"accs/test_accs_{opt_t}_{tag}.csv")
