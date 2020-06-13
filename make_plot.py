@@ -8,12 +8,13 @@ import argparse
 
 # Command line arguments
 parser = argparse.ArgumentParser()
-parser.add_argument("--method", help="Name of optimizer method", type=str, nargs='+', default="NestedLookahead Adam")
-parser.add_argument("--without", help="Specify keywords of filenames not to include", nargs='+', type=str, default="pullback reset")
+parser.add_argument("--method", help="Name of optimizer method (e.g., NestedLookahead Adam)", type=str, nargs='+', default="")
+parser.add_argument("--with_t", help="Specify keywords of filenames to include (e.g., 200 epochs)", type=str, nargs='+', default="")
+parser.add_argument("--without", help="Specify keywords of filenames not to include (e.g., pullback reset)", nargs='+', type=str, default="pullback reset")
 parser.add_argument("--tag", help="Tag added to image file name (e.g., demo)", type=str, default="demo")
-parser.add_argument("--root", help="directory name containing data to graph", type=str, default="accs")
-parser.add_argument("--runs", help="Number of runs within data", type=int, default=2)
-parser.add_argument("--img", help="Image file base name", type=str, default="test_acc")
+parser.add_argument("--root", help="directory name containing data to graph (default: accs)", type=str, default="accs")
+parser.add_argument("--runs", help="Number of runs within data (default: 2)", type=int, default=2)
+parser.add_argument("--img", help="Image file base name (default: test_acc)", type=str, default="test_acc")
 args = parser.parse_args()
 
 # Settings
@@ -24,15 +25,19 @@ img_name = args.img
 
 name = 'CIFAR-10'
 to_file_base = 'cifar10_' + tag
-verbose = False
+verbose = True
 
 method = args.method # terms for data to include in plot
 without_terms = args.without # terms for data not to include in plot (e.g., momentum=0, pullback, Nested, etc.)
+with_terms = args.with_t # terms for data to include
 
 # Ensure argparse accepts terms correctly
 if isinstance(without_terms, str):
     without_terms = without_terms.split()
-
+    
+if isinstance(with_terms, str):
+    with_terms = with_terms.split()
+    
 if not isinstance(method, str) and isinstance(method, Iterable):
     method = " ".join(method)
 
@@ -63,7 +68,7 @@ def length_test(A):
             assert length == len(obj)
         except AssertionError:
             raise ValueError(f"{obj} should be size {length} but was size {len(obj)}")
-    if verbose: print("Length Test Passed")
+    if verbose: print("Length Test Passed\n")
 
 def name_change(a):
     for i in range(len(a)):
@@ -88,8 +93,9 @@ def name_change(a):
 
 # Get file names
 files = os.listdir(root)
-test_files = queries(files, ['.csv','test'])
-train_files = queries(files, ['.csv','train'])
+test_files = queries(files, keys=['.csv','test'] + with_terms, without=without_terms)
+
+if verbose: print(test_files, '\n')
 
 experiments = sorted(list(set([i[5:-6] for i in test_files])))
 
@@ -108,6 +114,8 @@ length_test(exp_test)
 # Change experiment names for legends
 experiments = name_change(experiments)
 # filename_dict = dict(zip(sorted(test_files), sorted(experiments*2)))
+
+if verbose: print(experiments, '\n')
 
 # Load file data for each experiment
 tests = [] # exp_test file data
@@ -152,9 +160,9 @@ def create_plot(method, data):
     plt.tick_params(labelsize=14)
     plt.title(f"{name} {method} Test Accuracies", **title_font)
 
-    for i, exp in enumerate(experiment_type):
+    for i, exp in enumerate(experiments):
         styles = {'linestyle': get_style(exp), 'color': colorlist[i]}
-        for i in range(folds):
+        for i in range(runs):
             vals = experiment_dict[exp]
             plt.plot(vals[:,i], alpha=0.2, **styles)
         plt.plot(vals.mean(axis=1), label=exp, **styles)
@@ -163,7 +171,7 @@ def create_plot(method, data):
         plt.legend(loc='lower right', prop=axis_font)
 
     plt.savefig(f"plots/{to_file_base}_{method.lower().replace(' ','_')}_{img_name}.png")
-    if verbose: print(f"saved to plots/{to_file_base}_{method.lower().replace(' ','_')}_{img_name}.png")
+    print(f"saved to plots/{to_file_base}_{method.lower().replace(' ','_')}_{img_name}.png", '\n')
     plt.close()
 
 data = queries(experiments, keys=method, without=without_terms)
