@@ -205,7 +205,7 @@ tst_acc_df = pd.DataFrame(test_accs)
 if not os.path.isdir('accs'):
     os.mkdir('accs')
 
-# if not os.path.isdir('losses'):
+# if not os.path.isdir('loss'):
 #     os.mkdir('loss')
 
 # tr_acc_df.to_csv(f"accs/train_accs_{opt_t}_{tag}.csv")
